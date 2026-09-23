@@ -13,7 +13,7 @@ export default function Navbar() {
           <span className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
             <GraduationCap size={18} />
           </span>
-          <span className="font-display font-semibold text-ink">EduSmart AI</span>
+          <span className="font-display font-semibold text-ink">SmartSched</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
@@ -24,7 +24,7 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <Button as={Link} to="/login" variant="ghost" size="sm">Log in</Button>
-          <Button as={Link} to="/signup" variant="primary" size="sm">Get Started</Button>
+          <Button as={Link} to="/signup" variant="primary" size="sm">SignUp</Button>
         </div>
 
         <button className="md:hidden text-slate-600" onClick={() => setOpen((o) => !o)} aria-label="Toggle menu">

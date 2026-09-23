@@ -62,7 +62,7 @@ export default function Landing() {
 
         <Card className="p-6 relative overflow-hidden">
           <div className="absolute -top-16 -right-16 w-48 h-48 bg-violet-500/10 rounded-full blur-2xl" />
-          <p className="text-xs font-medium text-slate-400 mb-3">Today's AI Study Plan</p>
+          <p className="text-xs font-medium text-slate-400 mb-3">Notifications</p>
           <div className="space-y-3">
             {[
               { subject: 'DBMS', topic: 'Normalization (1NF\u20133NF)', done: true },

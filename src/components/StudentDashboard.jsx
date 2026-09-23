@@ -11,8 +11,8 @@ const schedule = [
 ];
 
 const subjects = [
-  { name: 'Mathematics', pct: 88 },
-  { name: 'Chemistry', pct: 74 },
+  { name: 'Computer Science', pct: 88 },
+  { name: 'Operating Science', pct: 74 },
   { name: 'History', pct: 91 },
   { name: 'Computer Sci.', pct: 82 },
   { name: 'English', pct: 69 },
