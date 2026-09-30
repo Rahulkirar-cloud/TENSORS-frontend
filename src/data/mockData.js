@@ -1,13 +1,13 @@
 // Central mock data source. In a real app this would come from an API.
 
 export const student = {
-  name: 'Aarav Mehta',
+  name: 'Admin',
   email: 'aarav.mehta@example.com',
   education: 'B.Tech, Computer Science — 3rd Year',
   goals: 'Crack campus placements and master full-stack development',
   skills: ['JavaScript', 'React', 'DBMS', 'Data Structures', 'Python'],
   streak: 12,
-  avatarInitials: 'AM',
+  avatarInitials: 'A',
 }
 
 export const dashboardStats = [

@@ -1,48 +1,71 @@
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import { ToastProvider } from './components/Toast.jsx'
+import { Routes, Route } from "react-router-dom";
+import { ToastProvider } from "./components/Toast.jsx";
 
-import PublicLayout from './layouts/PublicLayout.jsx'
-import DashboardLayout from './layouts/DashboardLayout.jsx'
+import Landing from "./pages/Landing.jsx";
+import PublicLayout from "./layouts/PublicLayout.jsx";
+import AdminLayout from "./layouts/AdminLayout.jsx";
 
-import Landing from './pages/Landing.jsx'
-import Login from './pages/Login.jsx'
-import Signup from './pages/Signup.jsx'
-import Dashboard from './pages/Dashboard.jsx'
-import StudyPlanner from './pages/StudyPlanner.jsx'
-import DoubtSolver from './pages/DoubtSolver.jsx'
-import Courses from './pages/Courses.jsx'
-import Notes from './pages/Notes.jsx'
-import Quiz from './pages/Quiz.jsx'
-import ProgressPage from './pages/Progress.jsx'
-import Profile from './pages/Profile.jsx'
-import Settings from './pages/Settings.jsx'
-import StudentDashboard from "./components/StudentDashboard.jsx"
+import Login from "./pages/Login.jsx";
+import Signup from "./pages/Signup.jsx";
+import Management from "./pages/Management.jsx";
 
-export default function App() {
+import BasicInfo from "./components/BasicInfo.jsx";
+import Subjects from "./components/Subjects.jsx";
+import FacultyList from "./components/FacultyList.jsx";
+import AddFaculty from "./components/AddFaculty.jsx";
+import EditFaculty from "./components/EditFaculty.jsx";
+import BulkUpload from "./components/BulkUpload.jsx";
+import Classroom from "./components/Classroom.jsx";
+import TimeSlot from "./components/TimeSlot.jsx";
+import Student from "./components/Student.jsx";
+import Review from "./components/Review.jsx";
+
+function App() {
   return (
     <ToastProvider>
       <Routes>
+
+        {/* Public */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
         </Route>
 
-        <Route path="/dashboard" element={<DashboardLayout />}>
-        <Route index element={<StudentDashboard studentName="Rahul" />} />
-          {/* <Route index element={<Dashboard />} /> */}
-          <Route path="planner" element={<StudyPlanner />} />
-          <Route path="doubt-solver" element={<DoubtSolver />} />
-          <Route path="courses" element={<Courses />} />
-          <Route path="notes" element={<Notes />} />
-          <Route path="quiz" element={<Quiz />} />
-          <Route path="progress" element={<ProgressPage />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="settings" element={<Settings />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+
+        {/* Admin */}
+        <Route element={<AdminLayout />}>
+
+          <Route path="/admin" element={<Management />}>
+
+            {/* Faculty */}
+            <Route path="faculty" element={<FacultyList />} />
+            <Route path="faculty/add" element={<AddFaculty />} />
+            <Route
+              path="faculty/edit/:facultyId"
+              element={<EditFaculty />}
+            />
+            <Route
+              path="faculty/bulk-upload"
+              element={<BulkUpload />}
+            />
+
+            {/* Other Management Pages */}
+            <Route path="basicinfo" element={<BasicInfo />} />
+            <Route path="subjects" element={<Subjects />} />
+            <Route path="classroom" element={<Classroom />} />
+            <Route path="timeslot" element={<TimeSlot />} />
+            <Route path="student" element={<Student />} />
+            <Route path="review" element={<Review />} />
+
+          </Route>
+
         </Route>
+
       </Routes>
     </ToastProvider>
-    
-  )
+  );
 }
+
+export default App;

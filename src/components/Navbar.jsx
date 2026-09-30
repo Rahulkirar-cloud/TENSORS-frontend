@@ -18,7 +18,7 @@ export default function Navbar() {
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
           <a href="/#features" className="hover:text-ink">Features</a>
-          <a href="/#how-it-works" className="hover:text-ink">How It Works</a>
+          <a href="" className="hover:text-ink">How It Works</a>
           <a href="/#about" className="hover:text-ink">About</a>
         </nav>
 
