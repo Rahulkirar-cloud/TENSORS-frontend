@@ -16,7 +16,7 @@ import AddFaculty from "./components/AddFaculty.jsx";
 import EditFaculty from "./components/EditFaculty.jsx";
 import BulkUpload from "./components/BulkUpload.jsx";
 import Classroom from "./components/Classroom.jsx";
-import TimeSlot from "./components/TimeSlot.jsx";
+import Timeslot from "./components/TimeSlot.jsx";
 import Student from "./components/Student.jsx";
 import Review from "./components/Review.jsx";
 
