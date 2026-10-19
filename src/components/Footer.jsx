@@ -4,11 +4,11 @@ import { GraduationCap, Twitter, Linkedin, Github, Instagram } from 'lucide-reac
 
 export default function Footer() {
   return (
-    <footer className="bg-ink text-slate-300">
+    <footer className="bg-ink text-slate-900">
       <div className="max-w-6xl mx-auto px-5 py-14 grid grid-cols-1 sm:grid-cols-3 gap-10">
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <span className="w-8 h-8 rounded-lg bg-indigo-500 text-white flex items-center justify-center">
+            <span className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
               <GraduationCap size={18} />
             </span>
             <span className="font-display font-semibold text-white">EduSmart AI</span>

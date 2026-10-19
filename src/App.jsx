@@ -16,7 +16,7 @@ import AddFaculty from "./components/AddFaculty.jsx";
 import EditFaculty from "./components/EditFaculty.jsx";
 import BulkUpload from "./components/BulkUpload.jsx";
 import Classroom from "./components/Classroom.jsx";
-import Timeslot from "./components/TimeSlot.jsx";
+import Timeslot from "./components/Timeslot.jsx";
 import Student from "./components/Student.jsx";
 import Review from "./components/Review.jsx";
 
@@ -55,7 +55,7 @@ function App() {
             <Route path="basicinfo" element={<BasicInfo />} />
             <Route path="subjects" element={<Subjects />} />
             <Route path="classroom" element={<Classroom />} />
-            <Route path="timeslot" element={<TimeSlot />} />
+            <Route path="timeslot" element={<Timeslot />} />
             <Route path="student" element={<Student />} />
             <Route path="review" element={<Review />} />
 

@@ -1,430 +1,224 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 
-const Classroom = () => {
+import "@univerjs/sheets/facade";
+import "@univerjs/sheets-ui/facade";
 
-  // ================= SUBJECT LIST =================
-  const [classroom, setClassroom] = useState([]);
+import {
+  createUniver,
+  LocaleType,
+  mergeLocales,
+} from "@univerjs/presets";
 
-  // ================= FORM STATES =================
-  const [buildingID, setBuildingID] = useState("");
-  const [roomnumber, setRoomnumber] = useState("");
-  const [type, setType] = useState("");
-  const [capacity, setCapacity] = useState("");
+import {
+  UniverSheetsCorePreset,
+} from "@univerjs/preset-sheets-core";
 
-  // ================= EDIT STATE =================
-  const [editId, setEditId] = useState(null);
+import UniverPresetSheetsCoreEnUS from
+  "@univerjs/preset-sheets-core/locales/en-US";
+
+import "@univerjs/preset-sheets-core/lib/index.css";
 
 
-  // ================= ADD SUBJECT =================
-  const handleAddClassroom = () => {
+export default function FacultyList() {
 
-    if (
-      !buildingID ||
-      !roomnumber ||
-      !type ||
-      !capacity
-    ) {
-      alert("Please fill all  details");
+  const containerRef = useRef(null);
+  const univerAPIRef = useRef(null);
+
+  // Store spreadsheet data in a React variable
+  const [sheetData, setSheetData] = useState([]);
+
+  const handlesave = () => {
+    const univerAPI = univerAPIRef.current;
+
+    if (!univerAPI) {
+      console.log("Spreadsheet is not ready yet");
       return;
     }
 
-    const newClassroom = {
-      id: Date.now(),
-      buildingID: buildingID,
-      roomnumber: roomnumber,
-      type: type,
-      capacity: capacity
-    };
+    const workbook = univerAPI.getActiveWorkbook();
+    const worksheet = workbook?.getActiveSheet();
 
-    setClassroom([...classroom, newClassroom]);
-
-    // Clear form
-    setBuildingID("");
-    setRoomnumber("");
-    setType("");
-    setCapacity("");
-  };
-
-
-  // ================= EDIT SUBJECT =================
-  const handleEdit = (classroom) => {
-
-    setBuildingID(classroom.buildingID);
-    setRoomnumber(classroom.roomnumber);
-    setType(classroom.type);
-    setCapacity(classroom.capacity);
-
-    setEditId(classroom.id);
-  };
-
-
-  // ================= UPDATE SUBJECT =================
-  const handleUpdateClassroom = () => {
-
-    if (
-      !buildingID ||
-      !roomnumber ||
-      !type ||
-      !capacity
-    ) {
-      alert("Please fill all subject details");
+    if (!worksheet) {
+      console.log("No active worksheet found");
       return;
     }
 
-    setClassroom(
-      classroom.map((classroom) =>
-        classroom.id === editId
-          ? {
-            ...classroom,
-            buildingID: buildingID,
-            roomnumber: roomnumber,
-            type: type,
-            capacity: capacity
-          }
-          : classroom
-      )
+    // Read all cells in the worksheet's data range
+    const values = worksheet.getDataRange().getValues();
+
+    // Remove rows that are completely empty
+    const cleanedData = values.filter((row) =>
+      row.some((cell) => cell !== null && cell !== "")
     );
 
-    // Clear form
-    setEditId(null);
-    setBuildingID("");
-    setRoomnumber("");
-    setType("");
-    setCapacity("");
+    // Store the spreadsheet values in a variable
+    setSheetData(cleanedData);
+
+    console.log("Spreadsheet data:", cleanedData);
   };
 
 
-  // ================= CANCEL EDIT =================
-  const handleCancelEdit = () => {
+  useEffect(() => {
+    const host = containerRef.current;
+    if (!host) {
+      return;
+    }
+    const container = document.createElement("div");
 
-    setEditId(null);
+    container.style.width = "100%";
+    container.style.height = "100%";
 
-    setBuildingID("");
-    setRoomnumber("");
-    setType("");
-    setCapacity("");
-  };
+    host.appendChild(container);
 
+
+    // =========================================
+    // 3. Create Univer
+    // =========================================
+
+    const { univer, univerAPI } = createUniver({
+
+      locale: LocaleType.EN_US,
+
+      locales: {
+        [LocaleType.EN_US]: mergeLocales(
+          UniverPresetSheetsCoreEnUS
+        ),
+      },
+
+      presets: [
+        UniverSheetsCorePreset({
+          container: container,
+          formulaBar: false,
+          ribbonType: "collapsed"
+        }),
+      ],
+
+    });
+
+
+    // =========================================
+    // 4. Create Workbook
+    // =========================================
+
+    const workbook = univerAPI.createWorkbook({
+      name: "Classrooms",
+
+    });
+
+
+    // =========================================
+    // 5. Get Active Sheet
+    // =========================================
+
+    const sheet = workbook.getActiveSheet();
+
+    sheet?.setRowCount(50);
+    sheet?.setColumnCount(10);
+
+    // =========================================
+    // 6. Default Headers
+    // =========================================
+
+    const headers = [
+      "Building Name",
+      "Room Number",
+      "Type",
+      "Capacity",
+    ];
+
+
+    // =========================================
+    // 7. Set Headers + Formatting
+    // =========================================
+
+    headers.forEach((header, columnIndex) => {
+
+      // Get header cell
+      const headerCell = sheet.getRange(
+        0,
+        columnIndex
+      );
+
+      // Set header value
+      headerCell.setValue(header);
+
+      // Header font formatting
+      headerCell
+        .setFontSize(14)
+        .setFontWeight("bold")
+        .setHorizontalAlignment("center")
+        .setFontColor('#03306b')
+
+      // Column width
+      const width = Math.max(
+        header.length * 12 + 30,
+        100
+      );
+
+      sheet.setColumnWidth(
+        columnIndex,
+        width
+      );
+
+    });
+
+
+    // =========================================
+    // 8. Cleanup
+    // =========================================
+    // Make the API available to the Save button
+    univerAPIRef.current = univerAPI;
+    return () => {
+      setTimeout(() => {
+
+        univer.dispose();
+
+        if (container.parentNode) {
+          container.parentNode.removeChild(container);
+        }
+
+        sheet.current = null;
+
+      }, 0);
+    };
+  }, []);
+
+
+
+  // =========================================
+  // 9. Render
+  // =========================================
 
   return (
-    <div
-      className="container mx-auto my-4 p-6 rounded-2xl shadow-2xl
-                 bg-linear-to-br from-blue-50 via-white to-indigo-100
-                 font-['Times_New_Roman']"
-    >
-
-      {/* ================= HEADER ================= */}
-
-      <div className="mb-8">
-
-        <h1 className="text-3xl font-bold text-blue-900">
-          Class-Rooms
-        </h1>
-
-        <p className="text-xl text-gray-500 mt-1">
-          Enter the Class details of your timetable.
-        </p>
-
-      </div>
-
-
-      {/* ================= Building INFORMATION ================= */}
-
-      <form
-        className="grid grid-cols-2 gap-x-8 gap-y-6 max-w-5xl"
-        onSubmit={(e) => e.preventDefault()}
-      >
-
-        {/* Building ID */}
-
-        <div className="flex flex-col">
-
-          <label className="text-lg font-semibold text-blue-900 mb-2">
-            Building ID
-          </label>
-
-          <input
-            type="text"
-            placeholder="Enter building ID"
-            value={buildingID}
-            onChange={(e) => setBuildingID(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-3
-                       bg-white outline-blue-800"
-          />
-
-        </div>
-
-
-        {/* Building Name */}
-
-        <div className="flex flex-col">
-
-          <label className="text-lg font-semibold text-blue-900 mb-2">
-            Building Name
-          </label>
-
-          <input
-            type="text"
-            placeholder="Enter building name"
-            className="w-full border border-gray-300 rounded-lg p-3
-                       bg-white outline-blue-800"
-          />
-
-        </div>
-
-
-        {/* Room Number */}
-
-        <div className="flex flex-col">
-
-          <label className="text-lg font-semibold text-blue-900 mb-2">
-            Room number
-          </label>
-
-          <input
-            type="text"
-            placeholder="Enter the Room number"
-            value={roomnumber}
-            onChange={(e) => setRoomnumber(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-3
-                       outline-blue-800 bg-white"
-          />
-
-        </div>
-
-        {/* Type */}
-        <div className="flex flex-col">
-          <label className="text-lg font-semibold text-blue-900 mb-2">
-            Type
-          </label>
-
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-3
-                       outline-blue-800 bg-white"
-
-          >
-            <option value="">Select Type</option>
-            <option value="Theory">Theory</option>
-            <option value="Practical">Practical</option>
-
-          </select>
-        </div>
-
-
-        {/* Capacity */}
-
-        <div className="flex flex-col">
-
-          <label className="text-lg font-semibold text-blue-900 mb-2">
-            Capacity
-          </label>
-
-          <input
-            type="number"
-            placeholder="Enter the capacity of the classroom"
-            value={capacity}
-            onChange={(e) => setCapacity(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-3
-                       outline-blue-800 bg-white"
-          />
-
-        </div>
-
-
-
-      </form>
-
-
-      {/* ================= ADD / UPDATE BUTTON ================= */}
-
-      <div className="mt-8 flex justify-end gap-3">
-
-        {editId ? (
-
-          <>
-            <button
-              type="button"
-              onClick={handleUpdateClassroom}
-              className="px-6 py-3 rounded-lg
-                         bg-green-600 text-white font-semibold
-                         hover:bg-green-700
-                         transition duration-200"
-            >
-              Update Subject
-            </button>
-
-            <button
-              type="button"
-              onClick={handleCancelEdit}
-              className="px-6 py-3 rounded-lg
-                         bg-gray-500 text-white font-semibold
-                         hover:bg-gray-600
-                         transition duration-200"
-            >
-              Cancel
-            </button>
-          </>
-
-        ) : (
-
-          <button
-            type="button"
-            onClick={handleAddClassroom}
-            className="px-6 py-3 rounded-lg
-                       bg-blue-900 text-white font-semibold
-                       hover:bg-blue-700
-                       transition duration-200"
-          >
-            + Add Classroom
-          </button>
-
-        )}
-
-      </div>
-
-
-      {/* ================= ADDED SUBJECTS ================= */}
-
-      {classroom.length > 0 && (
-
-        <div className="mt-10">
-
-          <h2 className="text-2xl font-bold text-blue-900 mb-4">
-            Added Classroom
-          </h2>
-
-
-          <div className="overflow-x-auto rounded-xl shadow-md">
-
-            <table className="w-full bg-white">
-
-              {/* TABLE HEADER */}
-
-              <thead className="bg-blue-600 text-white">
-
-                <tr>
-                  <th className="p-3 text-left">
-                    Building ID
-                  </th>
-
-                  <th className="p-3 text-left">
-                    Room number
-                  </th>
-
-                  <th className="p-3 text-left">
-                    Type
-                  </th>
-
-                  <th className="p-3 text-left">
-                    Capacity
-                  </th>
-
-                  <th className="p-3 text-left">
-                    Action
-                  </th>
-
-
-
-
-
-                </tr>
-
-              </thead>
-
-
-              {/* TABLE BODY */}
-
-              <tbody>
-
-                {classroom.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b hover:bg-blue-50"
-                  >
-                    <td className="p-3">
-                      {item.buildingID}
-                    </td>
-
-                    <td className="p-3">
-                      {item.roomnumber}
-                    </td>
-
-                    <td className="p-3">
-                      {item.type}
-                    </td>
-
-                    <td className="p-3">
-                      {item.capacity}
-                    </td>
-
-                    <td className="p-3">
-                      <button
-                        type="button"
-                        onClick={() => handleEdit(item)}
-                        className="px-4 py-2
-                   bg-yellow-500 text-white
-                   rounded-lg
-                   hover:bg-yellow-600
+    <div className="container overflow-scroll  mx-auto my-4 p-6 rounded-2xl shadow-2xl bg-linear-to-br from-blue-50 via-white to-indigo-100 font-['Times_New_Roman']">
+      <div className="m-4 min-[460px]:flex justify-between">
+        <div> <h1 className="text-3xl font-bold text-blue-900">Class-Rooms</h1>
+          <p className="text-xl text-gray-500 mt-1">Enter the class details of your timetable.</p></div>
+
+        <button
+          type="button"
+          onClick={handlesave}
+          className="px-10 h-12 text-xl flex-wrap rounded-lg bg-blue-900
+                   text-white font-semibold hover:bg-blue-700
                    transition duration-200"
-                      >
-                        Edit
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-
-
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        </div>
-
-      )}
-
-
-      {/* ================= PREVIOUS / NEXT ================= */}
-
-      <div
-        className="mt-10 border-t border-gray-200 pt-6
-                   flex justify-between"
-      >
-
-        {/* Previous */}
-
-        <Link
-          to="/management/faculty"
-          className="px-8 py-3 rounded-lg
-                     bg-blue-900 text-white font-semibold
-                     hover:bg-blue-700
-                     transition duration-200"
         >
-          ← Previous
-        </Link>
-
-
-        {/* Next */}
-
-        <Link
-          to="/management/timeslot"
-          className="px-8 py-3 rounded-lg
-                     bg-blue-900 text-white font-semibold
-                     hover:bg-blue-700
-                     transition duration-200"
-        >
-          Next →
-        </Link>
-
+          Save
+        </button>
       </div>
-
+      <div
+        ref={containerRef}
+        style={{
+          width: "100%",
+          height: "700px",
+        }}
+      >
+        <p className="mt-2 mb-2 font-semibold p-3 rounded-xl text-xl bg-blue-50">
+          Retrieved rows: {sheetData.length}
+        </p>
+      </div>
     </div>
-  );
-};
 
-export default Classroom;
+
+  );
+
+}

@@ -1,261 +1,224 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 
-function FacultyList() {
-  const [faculties, setFaculties] = useState([]);
-  const [search, setSearch] = useState("");
+import "@univerjs/sheets/facade";
+import "@univerjs/sheets-ui/facade";
 
-  const navigate = useNavigate();
+import {
+  createUniver,
+  LocaleType,
+  mergeLocales,
+} from "@univerjs/presets";
 
-  // GET FACULTY
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/faculty/")
-      .then((response) => response.json())
-      .then((data) => {
-        setFaculties(data);
-      })
-      .catch((error) => {
-        console.log("Error:", error);
-      });
-  }, []);
+import {
+  UniverSheetsCorePreset,
+} from "@univerjs/preset-sheets-core";
 
-  // DELETE
-  const handleDelete = (facultyId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this faculty?"
+import UniverPresetSheetsCoreEnUS from
+  "@univerjs/preset-sheets-core/locales/en-US";
+
+import "@univerjs/preset-sheets-core/lib/index.css";
+
+
+export default function FacultyList() {
+
+  const containerRef = useRef(null);
+  const univerAPIRef = useRef(null);
+
+  // Store spreadsheet data in a React variable
+  const [sheetData, setSheetData] = useState([]);
+
+  const handlesave = () => {
+    const univerAPI = univerAPIRef.current;
+
+    if (!univerAPI) {
+      console.log("Spreadsheet is not ready yet");
+      return;
+    }
+
+    const workbook = univerAPI.getActiveWorkbook();
+    const worksheet = workbook?.getActiveSheet();
+
+    if (!worksheet) {
+      console.log("No active worksheet found");
+      return;
+    }
+
+    // Read all cells in the worksheet's data range
+    const values = worksheet.getDataRange().getValues();
+
+    // Remove rows that are completely empty
+    const cleanedData = values.filter((row) =>
+      row.some((cell) => cell !== null && cell !== "")
     );
 
-    if (!confirmDelete) return;
+    // Store the spreadsheet values in a variable
+    setSheetData(cleanedData);
 
-    fetch(`http://127.0.0.1:8000/api/faculty/${facultyId}/`, {
-      method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        alert(data.message);
-
-        setFaculties((currentFaculties) =>
-          currentFaculties.filter(
-            (faculty) => faculty.faculty_id !== facultyId
-          )
-        );
-      })
-      .catch((error) => {
-        console.log("Error:", error);
-      });
+    console.log("Spreadsheet data:", cleanedData);
   };
 
-  // SEARCH
-  const filteredFaculties = faculties.filter((faculty) => {
-    const searchValue = search.toLowerCase().trim();
 
-    return (
-      faculty.name.toLowerCase().includes(searchValue) ||
-      faculty.faculty_id.toLowerCase().includes(searchValue)
-    );
-  });
+  useEffect(() => {
+    const host = containerRef.current;
+    if (!host) {
+      return;
+    }
+    const container = document.createElement("div");
+
+    container.style.width = "100%";
+    container.style.height = "100%";
+
+    host.appendChild(container);
+
+
+    // =========================================
+    // 3. Create Univer
+    // =========================================
+
+    const { univer, univerAPI } = createUniver({
+
+      locale: LocaleType.EN_US,
+
+      locales: {
+        [LocaleType.EN_US]: mergeLocales(
+          UniverPresetSheetsCoreEnUS
+        ),
+      },
+
+      presets: [
+        UniverSheetsCorePreset({
+          container: container,
+          formulaBar: false,
+          ribbonType: "collapsed"
+        }),
+      ],
+
+    });
+
+
+    // =========================================
+    // 4. Create Workbook
+    // =========================================
+
+    const workbook = univerAPI.createWorkbook({
+      name: "Faculty",
+
+    });
+
+
+    // =========================================
+    // 5. Get Active Sheet
+    // =========================================
+
+    const sheet = workbook.getActiveSheet();
+
+    sheet?.setRowCount(50);
+    sheet?.setColumnCount(10);
+
+    // =========================================
+    // 6. Default Headers
+    // =========================================
+
+    const headers = [
+      "Faculty_ID",
+      "Faculty_Name",
+      "Qualification",
+      "Designation",
+    ];
+
+
+    // =========================================
+    // 7. Set Headers + Formatting
+    // =========================================
+
+    headers.forEach((header, columnIndex) => {
+
+      // Get header cell
+      const headerCell = sheet.getRange(
+        0,
+        columnIndex
+      );
+
+      // Set header value
+      headerCell.setValue(header);
+
+      // Header font formatting
+      headerCell
+        .setFontSize(14)
+        .setFontWeight("bold")
+        .setHorizontalAlignment("center")
+        .setFontColor('#03306b')
+
+      // Column width
+      const width = Math.max(
+        header.length * 12 + 30,
+        100
+      );
+
+      sheet.setColumnWidth(
+        columnIndex,
+        width
+      );
+
+    });
+
+
+    // =========================================
+    // 8. Cleanup
+    // =========================================
+    // Make the API available to the Save button
+    univerAPIRef.current = univerAPI;
+    return () => {
+      setTimeout(() => {
+
+        univer.dispose();
+
+        if (container.parentNode) {
+          container.parentNode.removeChild(container);
+        }
+
+        sheet.current = null;
+
+      }, 0);
+    };
+  }, []);
+
+
+
+  // =========================================
+  // 9. Render
+  // =========================================
 
   return (
-    <div className="min-h-screen bg-gray-100 px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
+    <div className="container overflow-scroll mx-auto my-4 p-6 rounded-2xl shadow-2xl bg-linear-to-br from-blue-50 via-white to-indigo-100 font-['Times_New_Roman']">
+      <div className="m-4 min-[460px]:flex justify-between">
+        <div> <h1 className="text-3xl font-bold text-blue-900">Faculty Details</h1>
+          <p className="text-xl text-gray-500 mt-1">Enter faculty details of your college.</p></div>
 
-      <div className="mx-auto w-full max-w-7xl">
-
-        {/* HEADER */}
-        <div className="mb-5 flex flex-col gap-4 sm:mb-6 lg:flex-row lg:items-center lg:justify-between">
-
-          {/* TITLE */}
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl">
-              Faculty List
-            </h1>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Manage faculty information
-            </p>
-          </div>
-
-
-          {/* BUTTONS */}
-          <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
-
-            {/* ADD FACULTY */}
-            <button
-              onClick={() => navigate("/admin/faculty/add")}
-
-              className="w-full rounded-lg bg-violet-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-violet-700 sm:w-auto"
-            >
-              + Add Faculty
-            </button>
-
-
-            {/* BULK UPLOAD */}
-            <button
-              onClick={() => navigate("/admin/faculty/bulk-upload")}
-              className="w-full rounded-lg bg-green-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-green-700 sm:w-auto"
-            >
-              📁 Bulk Upload
-            </button>
-
-          </div>
-
-        </div>
-
-
-        {/* SEARCH */}
-        <div className="mb-5 rounded-xl bg-white p-4 shadow-md sm:mb-6 sm:p-5">
-
-          <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
-            Search Faculty
-          </label>
-
-          <input
-            type="text"
-            placeholder="Search by name or Faculty ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-3 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-300 sm:px-4 sm:text-base"
-          />
-
-        </div>
-
-
-        {/* TABLE */}
-        <div className="overflow-hidden rounded-xl bg-white shadow-md">
-
-          {/* MOBILE HORIZONTAL SCROLL */}
-          <div className="w-full overflow-x-auto">
-
-            <table className="w-full min-w-[750px] text-left">
-
-              {/* TABLE HEADER */}
-              <thead className="bg-violet-600 text-white">
-
-                <tr>
-
-                  <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                    Name
-                  </th>
-
-                  <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                    Faculty ID
-                  </th>
-
-                  <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                    Qualification
-                  </th>
-
-                  <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                    Role
-                  </th>
-
-                  <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                    Action
-                  </th>
-
-                </tr>
-
-              </thead>
-
-
-              {/* TABLE BODY */}
-              <tbody>
-
-                {filteredFaculties.length > 0 ? (
-
-                  filteredFaculties.map((faculty) => (
-
-                    <tr
-                      key={faculty.id}
-                      className="border-b transition hover:bg-gray-50"
-                    >
-
-                      {/* NAME */}
-                      <td className="px-4 py-3 text-sm font-medium text-gray-800 sm:px-6 sm:py-4 sm:text-base">
-                        {faculty.name}
-                      </td>
-
-
-                      {/* FACULTY ID */}
-                      <td className="px-4 py-3 text-sm text-gray-700 sm:px-6 sm:py-4 sm:text-base">
-                        {faculty.faculty_id}
-                      </td>
-
-
-                      {/* QUALIFICATION */}
-                      <td className="px-4 py-3 text-sm text-gray-700 sm:px-6 sm:py-4 sm:text-base">
-                        {faculty.qualification}
-                      </td>
-
-
-                      {/* ROLE */}
-                      <td className="px-4 py-3 text-sm text-gray-700 sm:px-6 sm:py-4 sm:text-base">
-                        {faculty.role}
-                      </td>
-
-
-                      {/* ACTION */}
-                      <td className="px-4 py-3 sm:px-6 sm:py-4">
-
-                        <div className="flex flex-col gap-2 sm:flex-row">
-
-                          {/* EDIT */}
-                          <button
-                            onClick={() =>
-                              navigate(
-                                `/faculty/edit/${faculty.faculty_id}`
-                              )
-                            }
-                            className="rounded-lg bg-violet-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-violet-700 sm:px-4 sm:text-sm"
-                          >
-                            Edit
-                          </button>
-
-
-                          {/* DELETE */}
-                          <button
-                            onClick={() =>
-                              handleDelete(faculty.faculty_id)
-                            }
-                            className="rounded-lg bg-red-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-red-700 sm:px-4 sm:text-sm"
-                          >
-                            Delete
-                          </button>
-
-                        </div>
-
-                      </td>
-
-                    </tr>
-
-                  ))
-
-                ) : (
-
-                  <tr>
-
-                    <td
-                      colSpan="5"
-                      className="px-4 py-8 text-center text-sm text-gray-500 sm:text-base"
-                    >
-                      No faculty found
-                    </td>
-
-                  </tr>
-
-                )}
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        </div>
-
+        <button
+          type="button"
+          onClick={handlesave}
+          className="px-10 h-12 text-xl flex-wrap rounded-lg bg-blue-900
+                   text-white font-semibold hover:bg-blue-700
+                   transition duration-200"
+        >
+          Save
+        </button>
       </div>
-
+      <div
+        ref={containerRef}
+        style={{
+          width: "100%",
+          height: "700px",
+        }}
+      >
+        <p className="mt-2 mb-2 font-semibold p-3 rounded-xl text-xl bg-blue-50">
+          Retrieved rows: {sheetData.length}
+        </p>
+      </div>
     </div>
-  );
-}
 
-export default FacultyList;
+
+  );
+
+}
