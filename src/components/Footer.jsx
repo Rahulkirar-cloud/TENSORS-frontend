@@ -4,7 +4,7 @@ import { GraduationCap, Twitter, Linkedin, Github, Instagram } from 'lucide-reac
 
 export default function Footer() {
   return (
-    <footer className="bg-ink text-slate-900">
+    <footer className="bg-blue-900 text-slate-900">
       <div className="max-w-6xl mx-auto px-5 py-14 grid grid-cols-1 sm:grid-cols-3 gap-10">
         <div>
           <div className="flex items-center gap-2 mb-3">

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { GraduationCap, Menu, X } from 'lucide-react'
-import Button from './Button.jsx'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
@@ -22,25 +21,14 @@ export default function Navbar() {
           <a href="/#about" className="hover:text-ink">About</a>
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
-          <Button as={Link} to="/login" variant="ghost" size="sm">Log in</Button>
-          <Button as={Link} to="/signup" variant="primary" size="sm">SignUp</Button>
         </div>
-
-        <button className="md:hidden text-slate-600" onClick={() => setOpen((o) => !o)} aria-label="Toggle menu">
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </div>
 
       {open && (
         <div className="md:hidden border-t border-slate-100 px-5 py-4 space-y-3 animate-fade-in">
           <a href="/#features" className="block text-sm text-slate-600" onClick={() => setOpen(false)}>Features</a>
           <a href="/#how-it-works" className="block text-sm text-slate-600" onClick={() => setOpen(false)}>How It Works</a>
           <a href="/#about" className="block text-sm text-slate-600" onClick={() => setOpen(false)}>About</a>
-          <div className="flex gap-3 pt-2">
-            <Button as={Link} to="/login" variant="secondary" size="sm" className="flex-1">Log in</Button>
-            <Button as={Link} to="/signup" variant="primary" size="sm" className="flex-1">Get Started</Button>
-          </div>
+         
         </div>
       )}
     </header>

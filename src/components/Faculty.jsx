@@ -19,7 +19,7 @@ import UniverPresetSheetsCoreEnUS from
 import "@univerjs/preset-sheets-core/lib/index.css";
 
 
-export default function FacultyList() {
+export default function Faculty() {
 
   const containerRef = useRef(null);
   const univerAPIRef = useRef(null);
@@ -190,7 +190,7 @@ export default function FacultyList() {
   // =========================================
 
   return (
-    <div className="container overflow-scroll mx-auto my-4 p-6 rounded-2xl shadow-2xl bg-linear-to-br from-blue-50 via-white to-indigo-100 font-['Times_New_Roman']">
+    <div className="container overflow-scroll mx-auto my-4 p-6 rounded-2xl shadow-2xl bg-linear-to-br from-blue-50 via-white to-indigo-100">
       <div className="m-4 min-[460px]:flex justify-between">
         <div> <h1 className="text-3xl font-bold text-blue-900">Faculty Details</h1>
           <p className="text-xl text-gray-500 mt-1">Enter faculty details of your college.</p></div>

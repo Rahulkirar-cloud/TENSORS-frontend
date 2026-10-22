@@ -190,7 +190,7 @@ export default function FacultyList() {
   // =========================================
 
   return (
-    <div className="container overflow-scroll  mx-auto my-4 p-6 rounded-2xl shadow-2xl bg-linear-to-br from-blue-50 via-white to-indigo-100 font-['Times_New_Roman']">
+    <div className="container overflow-scroll  mx-auto my-4 p-6 rounded-2xl shadow-2xl bg-linear-to-br from-blue-50 via-white to-indigo-100">
       <div className="m-4 min-[460px]:flex justify-between">
         <div> <h1 className="text-3xl font-bold text-blue-900">Class-Rooms</h1>
           <p className="text-xl text-gray-500 mt-1">Enter the class details of your timetable.</p></div>
@@ -200,8 +200,7 @@ export default function FacultyList() {
           onClick={handlesave}
           className="px-10 h-12 text-xl flex-wrap rounded-lg bg-blue-900
                    text-white font-semibold hover:bg-blue-700
-                   transition duration-200"
-        >
+                   transition duration-200">
           Save
         </button>
       </div>

@@ -5,16 +5,13 @@ import Landing from "./pages/Landing.jsx";
 import PublicLayout from "./layouts/PublicLayout.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 
-import Login from "./pages/Login.jsx";
-import Signup from "./pages/Signup.jsx";
+//import Login from "./pages/Login.jsx";
+//mport Signup from "./pages/Signup.jsx";
 import Management from "./pages/Management.jsx";
 
 import BasicInfo from "./components/BasicInfo.jsx";
 import Subjects from "./components/Subjects.jsx";
-import FacultyList from "./components/FacultyList.jsx";
-import AddFaculty from "./components/AddFaculty.jsx";
-import EditFaculty from "./components/EditFaculty.jsx";
-import BulkUpload from "./components/BulkUpload.jsx";
+import Faculty from "./components/Faculty.jsx";
 import Classroom from "./components/Classroom.jsx";
 import Timeslot from "./components/Timeslot.jsx";
 import Student from "./components/Student.jsx";
@@ -30,8 +27,8 @@ function App() {
           <Route path="/" element={<Landing />} />
         </Route>
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} /> */}
 
 
         {/* Admin */}
@@ -40,17 +37,10 @@ function App() {
           <Route path="/management" element={<Management />}>
 
             {/* Faculty */}
-            <Route path="faculty" element={<FacultyList />} />
-            <Route path="faculty/add" element={<AddFaculty />} />
-            <Route
-              path="faculty/edit/:facultyId"
-              element={<EditFaculty />}
-            />
-            <Route
-              path="faculty/bulk-upload"
-              element={<BulkUpload />}
-            />
-
+            <Route path="faculty" element={<Faculty/>} />
+            
+           
+           
             {/* Other Management Pages */}
             <Route path="basicinfo" element={<BasicInfo />} />
             <Route path="subjects" element={<Subjects />} />

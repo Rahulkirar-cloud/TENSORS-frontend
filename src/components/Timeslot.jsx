@@ -6,7 +6,7 @@ const Timeslot = () => {
     <div
       className="container mx-auto my-4 p-6 rounded-2xl shadow-2xl
                  bg-linear-to-br from-blue-50 via-white to-indigo-100
-                 font-['Times_New_Roman']"
+                 "
     >
 
       {/* ================= HEADER ================= */}

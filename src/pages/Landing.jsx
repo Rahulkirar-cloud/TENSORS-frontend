@@ -4,8 +4,7 @@ import {
   Sparkles, MessageCircleQuestion, Fingerprint, ListChecks, LineChart, StickyNote,
   CheckCircle2, ArrowRight, Target, Calendar, Rocket,
 } from 'lucide-react'
-import Button from '../components/Button.jsx'
-import Card from '../components/Card.jsx'
+
 
 const features = [
   { icon: Calendar, title: 'AI Study Planner', desc: 'A daily plan built around your exam date, subjects and pace — regenerated the moment your goals change.' },
@@ -45,10 +44,7 @@ export default function Landing() {
           <p className="text-slate-500 text-lg mt-5 max-w-md">
             Your AI-powered personal learning companion for smarter, personalized and effective education.
           </p>
-          <div className="flex flex-wrap gap-3 mt-8">
-            <Button as={Link} to="/signup" size="lg" icon={ArrowRight} iconPosition="right">Start Learning</Button>
-            <Button as="a" href="#features" variant="secondary" size="lg">Explore Features</Button>
-          </div>
+         
 
           <div className="flex flex-wrap gap-8 mt-12">
             {stats.map((s) => (
@@ -60,29 +56,6 @@ export default function Landing() {
           </div>
         </div>
 
-        <Card className="p-6 relative overflow-hidden">
-          <div className="absolute -top-16 -right-16 w-48 h-48 bg-violet-500/10 rounded-full blur-2xl" />
-          <p className="text-xs font-medium text-slate-400 mb-3">Notifications</p>
-          <div className="space-y-3">
-            {[
-              { subject: 'DBMS', topic: 'Normalization (1NF\u20133NF)', done: true },
-              { subject: 'React', topic: 'Custom Hooks Deep Dive', done: false },
-              { subject: 'DSA', topic: 'Binary Search Trees', done: false },
-            ].map((t) => (
-              <div key={t.subject} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100">
-                <CheckCircle2 size={20} className={t.done ? 'text-emerald-500' : 'text-slate-200'} />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-ink">{t.subject}</p>
-                  <p className="text-xs text-slate-500">{t.topic}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 flex items-center gap-2 text-xs text-indigo-600 bg-indigo-50 rounded-xl px-3 py-2.5">
-            <Sparkles size={14} />
-            "Focus 15 extra minutes on Binary Search Trees today \u2014 it came up twice in your last quiz."
-          </div>
-        </Card>
       </section>
 
       {/* Features */}
@@ -92,17 +65,7 @@ export default function Landing() {
             <h2 className="text-3xl font-display font-semibold text-ink">Everything you need to study with intent</h2>
             <p className="text-slate-500 mt-3">Six tools that work together, so plans, doubts and progress stay in sync.</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {features.map((f) => (
-              <Card key={f.title} hover className="p-6">
-                <span className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
-                  <f.icon size={22} strokeWidth={2} />
-                </span>
-                <h3 className="font-display font-semibold text-ink">{f.title}</h3>
-                <p className="text-sm text-slate-500 mt-2 leading-relaxed">{f.desc}</p>
-              </Card>
-            ))}
-          </div>
+         
         </div>
       </section>
 
@@ -139,7 +102,7 @@ export default function Landing() {
           <p className="relative text-slate-400 mt-3 max-w-md mx-auto">
             Set up your first AI study plan in under two minutes. No credit card required.
           </p>
-          <Button as={Link} to="/signup" size="lg" className="relative mt-7">Get Started</Button>
+        
         </div>
       </section>
     </div>

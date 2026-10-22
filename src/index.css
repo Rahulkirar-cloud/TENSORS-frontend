@@ -5,9 +5,11 @@ html {
 }
 
 body {
-  /* @apply bg-paper text-ink font-sans antialiased; */
-  font-family: 'Times New Roman', Times, serif
+   font-family: "Inter", sans-serif;
+
+  
 }
+
 
 /* h1, h2, h3, h4 {
   @apply font-display;

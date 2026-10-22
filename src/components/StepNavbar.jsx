@@ -51,7 +51,6 @@ const StepNavbar = () => {
         overflow-x-auto
         scrollbar-thin
 
-        font-['Times_New_Roman']
       "
     >
       <div

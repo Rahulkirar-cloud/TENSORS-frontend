@@ -192,7 +192,7 @@ export default function Student() {
   // =========================================
 
   return (
-    <div className="container overflow-scroll  mx-auto my-4 p-6 rounded-2xl shadow-2xl bg-linear-to-br from-blue-50 via-white to-indigo-100 font-['Times_New_Roman']">
+    <div className="container overflow-scroll  mx-auto my-4 p-6 rounded-2xl shadow-2xl bg-linear-to-br from-blue-50 via-white to-indigo-100">
       <div className="m-4 min-[460px]:flex justify-between">
         <div> <h1 className="text-3xl font-bold text-blue-900">Student Details</h1>
           <p className="text-xl text-gray-500 mt-1">Enter the student details of your timetable.</p></div>
